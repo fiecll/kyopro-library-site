@@ -20,21 +20,25 @@ export default function ViewLibraryFile() {
   const [code, setCode] = useState('読み込み中...');
   const [markdownHtml, setMarkdownHtml] = useState('');
 
-  useEffect(() => {
-    fetch(fileUrl)
-      .then((res) => (res.ok ? res.text() : Promise.reject('読み込み失敗')))
-      .then(setCode)
-      .catch(() => setCode('ファイルが見つかりません。'));
+useEffect(() => {
+  fetch(fileUrl)
+    .then((res) => (res.ok ? res.text() : Promise.reject('読み込み失敗')))
+    .then(setCode)
+    .catch(() => setCode('ファイルが見つかりません。'));
 
-    const mdUrl = fileUrl.replace(/\.cpp$/, '.md');
-    fetch(mdUrl)
-      .then((res) => (res.ok ? res.text() : ''))
-      .then((md) => {
-        if (md) {
-          setMarkdownHtml(marked(md));
-        }
-      });
-  }, [fileUrl]);
+  const mdUrl = fileUrl.replace(/\.cpp$/, '.md');
+  fetch(mdUrl)
+    .then((res) => (res.ok ? res.text() : ''))
+    .then((md) => {
+      if (md) {
+        import('marked').then(async ({ marked }) => {
+          const html = await marked(md);
+          setMarkdownHtml(html);
+        });
+      }
+    });
+}, [fileUrl]);
+
 
   return (
     <main style={{ padding: '1rem' }}>
