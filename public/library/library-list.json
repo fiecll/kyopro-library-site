@@ -1,6 +1,13 @@
 [
   "Trietree.cpp",
   "n進法からm進法に変換する関数(受け取りはstring).cpp",
+  "test.cpp",
+  "test2.cpp",
+  "test3.cpp",
+  "test4.cpp",
+  "test5.cpp",
+  "text6.cpp",
+  "text7.cpp",
   "エラトステネスの篩,.cpp",
   "グラフ/DFS深さ優先探索連結成分ライブラリ.cpp",
   "グラフ/ダイクストラ法.cpp",
