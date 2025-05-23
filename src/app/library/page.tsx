@@ -1,5 +1,4 @@
 import fs from 'fs';
-import { get } from 'http';
 import path from 'path';
 
 const LIBRARY_DIR = path.join(process.cwd(), 'library');
