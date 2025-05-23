@@ -27,7 +27,8 @@ jobs:
         run: npm run generate
 
       - name: Commit and push if changed
-        uses: stefanzweifel/git-auto-commit-action@v5
+        uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_message: 'ci: auto-generate library-list.json'
           push_token: ${{ secrets.GITHUB_TOKEN }}
+
