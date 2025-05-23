@@ -4,7 +4,7 @@ import { marked } from 'marked';
 import Link from 'next/link';
 import HighlightedCode from '@/components/HighlightedCode';
 
-export default function ViewLibraryFile({
+export default async function ViewLibraryFile({
   params,
 }: {
   params: { slug: string[] };
@@ -20,7 +20,7 @@ export default function ViewLibraryFile({
     const mdPath = fullPath.replace(/\.cpp$/, '.md');
     if (fs.existsSync(mdPath)) {
       const rawMd = fs.readFileSync(mdPath, 'utf8');
-      markdownHtml = marked(mdPath);
+      markdownHtml = await marked(rawMd);
     }
   } catch (e) {
     console.error(e);
