@@ -1,16 +1,19 @@
 'use client';
+import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import HighlightedCode from '@/components/HighlightedCode';
+import { marked } from 'marked';
 
-export default function ViewLibraryFile({
-  params,
-}: {
-  params: { slug: string[] };
-}) {
-  const decodedSegments = Array.isArray(params.slug)
-    ? params.slug.map(decodeURIComponent)
+export default function ViewLibraryFile() {
+  const params = useParams();
+  const slugArray = Array.isArray(params?.slug)
+    ? (params.slug as string[])
+    : typeof params?.slug === 'string'
+    ? [params.slug]
     : [];
+
+  const decodedSegments = slugArray.map(decodeURIComponent);
   const relativePath = decodedSegments.join('/');
   const fileUrl = `/library/${relativePath}`;
 
@@ -28,9 +31,7 @@ export default function ViewLibraryFile({
       .then((res) => (res.ok ? res.text() : ''))
       .then((md) => {
         if (md) {
-          import('marked').then(({ marked }) => {
-            setMarkdownHtml(marked(md));
-          });
+          setMarkdownHtml(marked(md));
         }
       });
   }, [fileUrl]);
