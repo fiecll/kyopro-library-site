@@ -30,3 +30,4 @@ jobs:
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: 'ci: auto-generate library-list.json'
+          push_token: ${{ secrets.GITHUB_TOKEN }}
