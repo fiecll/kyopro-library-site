@@ -3,7 +3,6 @@ import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import HighlightedCode from '@/components/HighlightedCode';
-import { marked } from 'marked';
 
 export default function ViewLibraryFile() {
   const params = useParams();
