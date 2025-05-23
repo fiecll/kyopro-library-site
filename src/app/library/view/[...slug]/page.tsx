@@ -1,27 +1,39 @@
-import fs from 'fs';
-import path from 'path';
-import { marked } from 'marked';
+'use client';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import HighlightedCode from '@/components/HighlightedCode';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export default async function ViewLibraryFile({ params }: any) {
+export default function ViewLibraryFile({
+  params,
+}: {
+  params: { slug: string[] };
+}) {
   const decodedSegments = params.slug.map(decodeURIComponent);
   const relativePath = decodedSegments.join('/');
-  const fullPath = path.join(process.cwd(), 'library', relativePath);
+  const fileUrl = `/library/${relativePath}`;
 
-  let code = 'ファイルが見つかりません。';
-  let markdownHtml = '';
-  try {
-    code = fs.readFileSync(fullPath, 'utf8');
-    const mdPath = fullPath.replace(/\.cpp$/, '.md');
-    if (fs.existsSync(mdPath)) {
-      const rawMd = fs.readFileSync(mdPath, 'utf8');
-      markdownHtml = await marked(rawMd); // ← await付きに修正
-    }
-  } catch (e) {
-    console.error(e);
-  }
+  const [code, setCode] = useState('読み込み中...');
+  const [markdownHtml, setMarkdownHtml] = useState('');
+
+  useEffect(() => {
+    // コード本体の読み込み
+    fetch(fileUrl)
+      .then((res) => (res.ok ? res.text() : Promise.reject('読み込み失敗')))
+      .then(setCode)
+      .catch(() => setCode('ファイルが見つかりません。'));
+
+    // Markdown解説の読み込み（.md が存在する場合）
+    const mdUrl = fileUrl.replace(/\.cpp$/, '.md');
+    fetch(mdUrl)
+      .then((res) => (res.ok ? res.text() : ''))
+      .then((md) => {
+        if (md) {
+          import('marked').then(({ marked }) => {
+            setMarkdownHtml(marked(md));
+          });
+        }
+      });
+  }, [fileUrl]);
 
   return (
     <main style={{ padding: '1rem' }}>
