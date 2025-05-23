@@ -4,6 +4,7 @@ import { marked } from 'marked';
 import Link from 'next/link';
 import HighlightedCode from '@/components/HighlightedCode';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default async function ViewLibraryFile({ params }: any) {
   const decodedSegments = params.slug.map(decodeURIComponent);
   const relativePath = decodedSegments.join('/');
