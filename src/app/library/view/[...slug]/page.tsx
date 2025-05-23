@@ -4,11 +4,11 @@ import { marked } from 'marked';
 import Link from 'next/link';
 import HighlightedCode from '@/components/HighlightedCode';
 
-interface PageProps {
+export default function ViewLibraryFile({
+  params,
+}: {
   params: { slug: string[] };
-}
-
-export default function ViewLibraryFile({ params }: PageProps) {
+}) {
   const decodedSegments = params.slug.map(decodeURIComponent);
   const relativePath = decodedSegments.join('/');
   const fullPath = path.join(process.cwd(), 'library', relativePath);
@@ -20,7 +20,7 @@ export default function ViewLibraryFile({ params }: PageProps) {
     const mdPath = fullPath.replace(/\.cpp$/, '.md');
     if (fs.existsSync(mdPath)) {
       const rawMd = fs.readFileSync(mdPath, 'utf8');
-      markdownHtml = marked(rawMd);
+      markdownHtml = marked(mdPath);
     }
   } catch (e) {
     console.error(e);
