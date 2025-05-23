@@ -1,20 +1,27 @@
 import fs from 'fs';
 import path from 'path';
+import { marked } from 'marked';
+import Link from 'next/link';
 import HighlightedCode from '@/components/HighlightedCode';
-import Link from 'next/link'; // ← Next.jsのリンクコンポーネント
 
-interface Props {
+interface PageProps {
   params: { slug: string[] };
 }
 
-export default function ViewLibraryFile({ params }: Props) {
+export default function ViewLibraryFile({ params }: PageProps) {
   const decodedSegments = params.slug.map(decodeURIComponent);
   const relativePath = decodedSegments.join('/');
   const fullPath = path.join(process.cwd(), 'library', relativePath);
 
   let code = 'ファイルが見つかりません。';
+  let markdownHtml = '';
   try {
     code = fs.readFileSync(fullPath, 'utf8');
+    const mdPath = fullPath.replace(/\.cpp$/, '.md');
+    if (fs.existsSync(mdPath)) {
+      const rawMd = fs.readFileSync(mdPath, 'utf8');
+      markdownHtml = marked(rawMd);
+    }
   } catch (e) {
     console.error(e);
   }
@@ -31,8 +38,20 @@ export default function ViewLibraryFile({ params }: Props) {
       <h1 style={{ fontSize: '1.25rem', margin: '1rem 0' }}>{relativePath}</h1>
 
       <HighlightedCode code={code} />
+
+      {markdownHtml && (
+        <section style={{ marginTop: '2rem' }}>
+          <h2 style={{ fontSize: '1rem', marginBottom: '0.5rem' }}>📄 解説</h2>
+          <div
+            dangerouslySetInnerHTML={{ __html: markdownHtml }}
+            style={{
+              backgroundColor: '#fefefe',
+              padding: '1rem',
+              borderRadius: '0.5rem',
+            }}
+          />
+        </section>
+      )}
     </main>
   );
 }
-
-
