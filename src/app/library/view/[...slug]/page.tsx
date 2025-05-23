@@ -4,11 +4,7 @@ import { marked } from 'marked';
 import Link from 'next/link';
 import HighlightedCode from '@/components/HighlightedCode';
 
-export default async function ViewLibraryFile({
-  params,
-}: {
-  params: { slug: string[] };
-}) {
+export default async function ViewLibraryFile({ params }: any) {
   const decodedSegments = params.slug.map(decodeURIComponent);
   const relativePath = decodedSegments.join('/');
   const fullPath = path.join(process.cwd(), 'library', relativePath);
@@ -20,7 +16,7 @@ export default async function ViewLibraryFile({
     const mdPath = fullPath.replace(/\.cpp$/, '.md');
     if (fs.existsSync(mdPath)) {
       const rawMd = fs.readFileSync(mdPath, 'utf8');
-      markdownHtml = await marked(rawMd);
+      markdownHtml = await marked(rawMd); // ← await付きに修正
     }
   } catch (e) {
     console.error(e);
