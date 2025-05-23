@@ -3,12 +3,13 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import HighlightedCode from '@/components/HighlightedCode';
 
-export default function ViewLibraryFile({
-  params,
-}: {
-  params: { slug: string[] };
-}) {
-  const decodedSegments = params.slug.map(decodeURIComponent);
+interface Props {
+  params?: { slug?: string[] };
+}
+
+export default function ViewLibraryFile({ params }: Props) {
+  const slugArray = Array.isArray(params?.slug) ? params!.slug! : [];
+  const decodedSegments = slugArray.map(decodeURIComponent);
   const relativePath = decodedSegments.join('/');
   const fileUrl = `/library/${relativePath}`;
 
@@ -16,17 +17,15 @@ export default function ViewLibraryFile({
   const [markdownHtml, setMarkdownHtml] = useState('');
 
   useEffect(() => {
-    // コード本体の読み込み
     fetch(fileUrl)
-      .then((res) => (res.ok ? res.text() : Promise.reject('読み込み失敗')))
+      .then(res => res.ok ? res.text() : Promise.reject('読み込み失敗'))
       .then(setCode)
       .catch(() => setCode('ファイルが見つかりません。'));
 
-    // Markdown解説の読み込み（.md が存在する場合）
     const mdUrl = fileUrl.replace(/\.cpp$/, '.md');
     fetch(mdUrl)
-      .then((res) => (res.ok ? res.text() : ''))
-      .then((md) => {
+      .then(res => res.ok ? res.text() : '')
+      .then(md => {
         if (md) {
           import('marked').then(({ marked }) => {
             setMarkdownHtml(marked(md));
@@ -37,10 +36,7 @@ export default function ViewLibraryFile({
 
   return (
     <main style={{ padding: '1rem' }}>
-      <Link
-        href="/library"
-        style={{ color: '#0070f3', textDecoration: 'underline' }}
-      >
+      <Link href="/library" style={{ color: '#0070f3', textDecoration: 'underline' }}>
         ← ライブラリ一覧に戻る
       </Link>
 
